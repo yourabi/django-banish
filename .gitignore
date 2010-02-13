@@ -3,3 +3,4 @@
 *.swp
 .DS_Store
 django_banish.egg-info/
+dist/
