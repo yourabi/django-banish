@@ -20,10 +20,17 @@ Requirements:
 Get django-banish 
 --------
 
+Get the source:
+
 Browse the source on GitHub: <http://github.com/yourabi/django-banish>
 
 Clone with Git:
     $ git clone git://github.com/yourabi/django-banish
+
+
+Install via easy_install or pip
+    easy_install django-banish
+    pip install django-banish
 
 
 Setup
