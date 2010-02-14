@@ -1,9 +1,8 @@
 django-banish
 ====
+django-banish is a Django middleware app to banish user agents by IP address or User Agent Header. It also supports basic abuse prevention by automatically banning users if they exceed a certain number of requests per minute, which is likely some form of attack or attempted denial of service.
 
-django-banish is django middleware app to banish user agents by IP addresses or User Agent Header. It also supports basic abuse prevention by automatically banning users if they exceed a certain number of requests per minute which is likely some form of attack or attemped denial of service.
-
-Django-banish stores all the 'banishments' in memory to avoid DB lookup on every request. It requires memcached, especially for the IP abuse monitoring feature.
+Django-banish stores all 'banishments' in memory to avoid database lookups on every request. It requires memcached, especially for the IP abuse monitoring feature.
 
 django-banish was previously called django-ipban and hosted on google-code. That code should be ignored - In 2010 it was dusted off and given a new life at github.
 
