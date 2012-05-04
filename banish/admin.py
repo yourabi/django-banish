@@ -15,6 +15,6 @@
 
 from django.contrib import admin
 
-from models import Banishment 
+from models import Banishment
 
 admin.site.register(Banishment)
