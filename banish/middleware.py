@@ -57,7 +57,7 @@ class BanishMiddleware(object):
                 cache.set(cache_key, "1")
 
             if ban.type == 'user-agent':
-                self.BANNED_USER_AGENTS.append(ban.condition)
+                self.BANNED_AGENTS.append(ban.condition)
 
     
     # To Handle X_FORWARDED_FOR, use SetRemoteAddrFromForwardedFor MiddleWare
