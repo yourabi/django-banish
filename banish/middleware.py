@@ -63,6 +63,8 @@ class BanishMiddleware(object):
     # To Handle X_FORWARDED_FOR, use SetRemoteAddrFromForwardedFor MiddleWare
     def process_request(self, request):
         ip = request.META['REMOTE_ADDR']
+        if (not ip or ip == '127.0.0.1') and 'HTTP_X_FORWARDED_FOR' in request.META:
+            ip = request.META['HTTP_X_FORWARDED_FOR']
         user_agent = request.META['HTTP_USER_AGENT']
 
         if self.DEBUG:
