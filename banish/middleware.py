@@ -32,8 +32,8 @@ class BanishMiddleware(object):
         # If disabled or not enabled raise MiddleWareNotUsed so django
         # processes next middleware.
         self.ENABLED = getattr(settings, 'BANISH_ENABLED', False)
-        self.DEBUG = getattr(settings, 'BANSIH_DEBUG', False)
-        self.ABUSE_THRESHOLD = getattr(settings, 'BANSIH_ABUSE_THRESHOLD', 75)
+        self.DEBUG = getattr(settings, 'BANISH_DEBUG', False)
+        self.ABUSE_THRESHOLD = getattr(settings, 'BANISH_ABUSE_THRESHOLD', 75)
 
         if not self.ENABLED:
             raise MiddlewareNotUsed(

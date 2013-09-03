@@ -38,9 +38,12 @@ Install django-banish. Make sure it is on your PYTHONPATH or in your django proj
 
 In your django project settings.py you must set the following options:
     1) Add 'banish.middleware.BanishMiddleware' to MIDDLEWARE_CLASSES
+
     2) Add 'banish' to INSTALLED_APPS
+
     3) Add BANISH_ENABLED = True to enable Django-Banish (handy if you lock yourself out)
-    4) Optionally set BANSIH_ABUSE_THRESHOLD (default is 75) to the threshold of requests per minute
+
+    4) Optionally set BANISH_ABUSE_THRESHOLD (default is 75) to the threshold of requests per minute
 
 Issues
 ------
