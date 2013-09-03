@@ -34,6 +34,7 @@ class BanishMiddleware(object):
         self.ENABLED = getattr(settings, 'BANISH_ENABLED', False)
         self.DEBUG = getattr(settings, 'BANISH_DEBUG', False)
         self.ABUSE_THRESHOLD = getattr(settings, 'BANISH_ABUSE_THRESHOLD', 75)
+        self.BANISH_EMPTY_UA = getattr(settings, 'BANISH_EMPTY_UA', True)
 
         if not self.ENABLED:
             raise MiddlewareNotUsed(
@@ -47,6 +48,9 @@ class BanishMiddleware(object):
         self.ABUSE_PREFIX = 'DJANGO_BANISH_ABUSE:'
 
         self.BANNED_AGENTS = []
+
+        if self.BANISH_EMPTY_UA:
+            self.BANNED_AGENTS.append(None)
 
         # Populate various 'banish' buckets
         for ban in Banishment.objects.all():
@@ -65,7 +69,8 @@ class BanishMiddleware(object):
         ip = request.META['REMOTE_ADDR']
         if (not ip or ip == '127.0.0.1') and 'HTTP_X_FORWARDED_FOR' in request.META:
             ip = request.META['HTTP_X_FORWARDED_FOR']
-        user_agent = request.META['HTTP_USER_AGENT']
+
+        user_agent = request.META.get('HTTP_USER_AGENT', None)
 
         if self.DEBUG:
             print >> sys.stderr, "GOT IP FROM Request: %s and User Agent %s" % (ip, user_agent)
