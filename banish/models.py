@@ -14,38 +14,37 @@
 
 
 import datetime
-import logging
 
 from django.db import models
-from django.contrib.auth.models import User, UserManager
+
 
 class Banishment(models.Model):
     id = models.AutoField(primary_key=True)
-    
+
     # Flush out time constrained banned in future revisions
     # ban_start = models.DateField(help_text="Banish Start Date.")
     # ban_stop = models.DateField(help_text="Banish Stop Date.")
     # ban_is_permanent = models.BooleanField(help_text="Is Ban Permanent? (Start/Stop ignored)")
 
     ban_reason = models.CharField(max_length=255, help_text="Reason for the ban?")
-    
+
     BAN_TYPES = (
         ('ip-address', 'IP Address'),
         ('user-agent', 'User Agent'),
     )
 
-    type = models.CharField ( 
-        max_length=20, 
-        choices=BAN_TYPES, 
-        default=0, 
+    type = models.CharField(
+        max_length=20,
+        choices=BAN_TYPES,
+        default=0,
         help_text="Type of User Ban to store"
     )
-    
-    condition = models.CharField(
-        max_length=255, 
+
+    condition = models.Charield(
+        max_length=255,
         help_text='Some descriptive text goes here'
     )
-    
+
     def __unicode__(self):
         return "Banished %s %s " % (self.type, self.condition)
 
@@ -60,8 +59,7 @@ class Banishment(models.Model):
         if self.permanent or self.stop > datetime.date.today(): 
             return True
         return False
-        
-        
+
     class Meta:
         permissions = (("can_ban_user", "Can Ban User"),)
         verbose_name = "Banishments"
