@@ -37,6 +37,7 @@ Setup
 Install django-banish. Make sure it is on your PYTHONPATH or in your django project directory.
 
 In your django project settings.py you must set the following options:
+
     1) Add 'banish.middleware.BanishMiddleware' to MIDDLEWARE_CLASSES
 
     2) Add 'banish' to INSTALLED_APPS
