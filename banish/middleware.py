@@ -51,7 +51,7 @@ class BanishMiddleware(object):
         # Populate various 'banish' buckets
         for ban in Banishment.objects.all():
             if self.DEBUG:
-                print >> sys.stderr, "IP BANISHMETN: ", ban.type
+                print >> sys.stderr, "IP BANISHMENT: ", ban.type
 
             if ban.type == 'ip-address':
                 cache_key = self.BANISH_PREFIX + ban.condition
