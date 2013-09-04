@@ -1,4 +1,4 @@
-# Copyright 2008-2010 Yousef Ourabi
+# Copyright 2008-2013 Yousef Ourabi
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ class BanishMiddleware(object):
         self.DEBUG = getattr(settings, 'BANISH_DEBUG', False)
         self.ABUSE_THRESHOLD = getattr(settings, 'BANISH_ABUSE_THRESHOLD', 75)
         self.BANISH_EMPTY_UA = getattr(settings, 'BANISH_EMPTY_UA', True)
+        self.BANISH_MESSAGE = getattr(settings, 'BANISH_MESSAGE', 'You are banned.')
 
         if not self.ENABLED:
             raise MiddlewareNotUsed(
@@ -77,7 +78,7 @@ class BanishMiddleware(object):
 
         # Check ban conditions
         if self.is_banned(ip) or self.monitor_abuse(ip) or user_agent in self.BANNED_AGENTS:
-            return HttpResponseForbidden('You are banned.', mimetype="text/html")
+            return HttpResponseForbidden(self.BANISH_MESSAGE, mimetype="text/html")
 
     def is_banned(self, ip):
         # If a key BANISH MC key exists we know the user is banned.

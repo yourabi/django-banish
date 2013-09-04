@@ -48,6 +48,8 @@ In your django project settings.py you must set the following options:
 
     5) Optionally set BANISH_ABUSE_THRESHOLD (default is 75) to the threshold of requests per minute
 
+    6) Optionally set BANISH_MESSAGE (default is "You are banned.") to change default message for banned user.
+
 Issues
 ------
 Find a bug? Want a feature? Submit an [issue
