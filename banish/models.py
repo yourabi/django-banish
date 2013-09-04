@@ -40,7 +40,7 @@ class Banishment(models.Model):
         help_text="Type of User Ban to store"
     )
 
-    condition = models.Charield(
+    condition = models.CharField(
         max_length=255,
         help_text='Some descriptive text goes here'
     )

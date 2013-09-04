@@ -17,7 +17,7 @@ try:
 except ImportError:
     from distutils.core import setup
 
-Version = 0.1
+Version = 0.2
 setup ( name='django-banish',
         version = Version,
         install_requires='python-memcached',
