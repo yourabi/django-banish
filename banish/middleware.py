@@ -92,7 +92,8 @@ class BanishMiddleware(object):
         """
         cache_key = self.ABUSE_PREFIX + ip
         abuse_count = cache.get(cache_key)
-        print >> sys.stderr, "ABUSE COUNT: ", abuse_count
+        if self.DEBUG:
+            print >> sys.stderr, "ABUSE COUNT: ", abuse_count
 
         over_abuse_limit = False
 

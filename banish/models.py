@@ -16,6 +16,10 @@
 import datetime
 
 from django.db import models
+from django.db.models.signals import post_save
+from django.core.cache import cache
+
+BANISH_PREFIX = 'DJANGO_BANISH:'
 
 
 class Banishment(models.Model):
@@ -65,3 +69,11 @@ class Banishment(models.Model):
         verbose_name = "Banishments"
         verbose_name_plural = "Banishments"
         db_table = 'banishments'
+
+
+def _update_cache(sender, instance, **kwargs):
+     if instance.type == 'ip-address':
+        cache_key = BANISH_PREFIX + instance.condition
+        cache.set(cache_key, "1")  
+
+post_save.connect(_update_cache, sender=Banishment)
