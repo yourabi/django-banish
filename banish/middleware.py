@@ -15,6 +15,7 @@
 
 import sys
 
+import django
 from django.conf import settings
 from django.http import HttpResponseForbidden
 from django.core.exceptions import MiddlewareNotUsed
@@ -78,7 +79,14 @@ class BanishMiddleware(object):
 
         # Check ban conditions
         if self.is_banned(ip) or self.monitor_abuse(ip) or user_agent in self.BANNED_AGENTS:
-            return HttpResponseForbidden(self.BANISH_MESSAGE, content_type="text/html")
+            return self.http_response_forbidden(self.BANISH_MESSAGE, content_type="text/html")
+
+    def http_response_forbidden(self, message, content_type):
+        if django.VERSION[:2] > (1,3):
+            kwargs = {'content_type': content_type}
+        else:
+            kwargs = {'mimetype': content_type}
+        return HttpResponseForbidden(message, **kwargs)
 
     def is_banned(self, ip):
         # If a key BANISH MC key exists we know the user is banned.
