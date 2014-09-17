@@ -78,7 +78,7 @@ class BanishMiddleware(object):
 
         # Check ban conditions
         if self.is_banned(ip) or self.monitor_abuse(ip) or user_agent in self.BANNED_AGENTS:
-            return HttpResponseForbidden(self.BANISH_MESSAGE, mimetype="text/html")
+            return HttpResponseForbidden(self.BANISH_MESSAGE, content_type="text/html")
 
     def is_banned(self, ip):
         # If a key BANISH MC key exists we know the user is banned.
