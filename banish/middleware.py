@@ -35,6 +35,7 @@ class BanishMiddleware(object):
         self.ENABLED = getattr(settings, 'BANISH_ENABLED', False)
         self.DEBUG = getattr(settings, 'BANISH_DEBUG', False)
         self.ABUSE_THRESHOLD = getattr(settings, 'BANISH_ABUSE_THRESHOLD', 75)
+        self.USE_HTTP_X_FORWARDED_FOR = getattr(settings, 'BANISH_USE_HTTP_X_FORWARDED_FOR', False)
         self.BANISH_EMPTY_UA = getattr(settings, 'BANISH_EMPTY_UA', True)
         self.BANISH_MESSAGE = getattr(settings, 'BANISH_MESSAGE', 'You are banned.')
 
@@ -66,11 +67,14 @@ class BanishMiddleware(object):
             if ban.type == 'user-agent':
                 self.BANNED_AGENTS.append(ban.condition)
 
-    # To Handle X_FORWARDED_FOR, use SetRemoteAddrFromForwardedFor MiddleWare
-    def process_request(self, request):
+    def _get_ip(self, request):
         ip = request.META['REMOTE_ADDR']
-        if (not ip or ip == '127.0.0.1') and 'HTTP_X_FORWARDED_FOR' in request.META:
-            ip = request.META['HTTP_X_FORWARDED_FOR']
+        if self.USE_HTTP_X_FORWARDED_FOR or not ip or ip == '127.0.0.1':
+            ip = request.META.get('HTTP_X_FORWARDED_FOR', ip).split(',')[0].strip()
+        return ip
+
+    def process_request(self, request):
+        ip = self._get_ip(request)
 
         user_agent = request.META.get('HTTP_USER_AGENT', None)
 
