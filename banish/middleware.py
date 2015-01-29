@@ -21,7 +21,7 @@ from django.http import HttpResponseForbidden
 from django.core.exceptions import MiddlewareNotUsed
 from django.core.cache import cache
 
-from models import Banishment
+from models import Banishment, Whitelist
 
 
 class BanishMiddleware(object):
@@ -49,6 +49,7 @@ class BanishMiddleware(object):
         # Prefix All keys in cache to avoid key collisions
         self.BANISH_PREFIX = 'DJANGO_BANISH:'
         self.ABUSE_PREFIX = 'DJANGO_BANISH_ABUSE:'
+        self.WHITELIST_PREFIX = 'DJANGO_BANISH_WHITELIST:'
 
         self.BANNED_AGENTS = []
 
@@ -66,6 +67,11 @@ class BanishMiddleware(object):
 
             if ban.type == 'user-agent':
                 self.BANNED_AGENTS.append(ban.condition)
+ 
+        for whitelist in Whitelist.objects.all():
+            if whitelist.type == 'ip-address-whitelist':
+                cache_key = self.WHITELIST_PREFIX + whitelist.condition
+                cache.set(cache_key, "1")
 
     def _get_ip(self, request):
         ip = request.META['REMOTE_ADDR']
@@ -81,8 +87,10 @@ class BanishMiddleware(object):
         if self.DEBUG:
             print >> sys.stderr, "GOT IP FROM Request: %s and User Agent %s" % (ip, user_agent)
 
-        # Check ban conditions
-        if self.is_banned(ip) or self.monitor_abuse(ip) or user_agent in self.BANNED_AGENTS:
+        # Check whitelist first, if not allowed, then check ban conditions
+        if self.is_whitelisted(ip):
+          return None
+        elif self.is_banned(ip) or self.monitor_abuse(ip) or user_agent in self.BANNED_AGENTS:
             return self.http_response_forbidden(self.BANISH_MESSAGE, content_type="text/html")
 
     def http_response_forbidden(self, message, content_type):
@@ -95,7 +103,16 @@ class BanishMiddleware(object):
     def is_banned(self, ip):
         # If a key BANISH MC key exists we know the user is banned.
         is_banned = cache.get(self.BANISH_PREFIX + ip)
+        if self.DEBUG and is_banned:
+            print >> sys.stderr, "BANISH BANNED IP: ", self.BANISH_PREFIX + ip
         return is_banned
+
+    def is_whitelisted(self, ip):
+        # If a whitelist key exists, return True to allow the request through
+        is_whitelisted = cache.get(self.WHITELIST_PREFIX + ip)
+        if self.DEBUG and is_whitelisted:
+            print >> sys.stderr, "BANISH WHITELISTED IP: ", self.WHITELIST_PREFIX + ip
+        return is_whitelisted
 
     def monitor_abuse(self, ip):
         """
@@ -105,7 +122,8 @@ class BanishMiddleware(object):
         cache_key = self.ABUSE_PREFIX + ip
         abuse_count = cache.get(cache_key)
         if self.DEBUG:
-            print >> sys.stderr, "ABUSE COUNT: ", abuse_count
+            print >> sys.stderr, "BANISH ABUSE COUNT: ", abuse_count
+            print >> sys.stderr, "BANISH CACHE KEY: ", cache_key
 
         over_abuse_limit = False
 
