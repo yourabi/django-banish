@@ -19,9 +19,11 @@ import django
 from django.conf import settings
 from django.http import HttpResponseForbidden
 from django.core.exceptions import MiddlewareNotUsed
-from django.core.cache import cache
+from django.core.cache import caches
 
 from models import Banishment, Whitelist
+
+cache = caches[getattr(settings, 'DJANGO_BANISH_CACHE', 'default')]
 
 
 class BanishMiddleware(object):
