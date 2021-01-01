@@ -17,7 +17,10 @@ import datetime
 
 from django.db import models
 from django.db.models.signals import post_save, post_delete
-from django.core.cache import cache
+from django.core.cache import caches
+from django.conf import settings
+
+cache = caches[getattr(settings, 'DJANGO_BANISH_CACHE', 'default')]
 
 ABUSE_PREFIX = 'DJANGO_BANISH_ABUSE:'
 BANISH_PREFIX = 'DJANGO_BANISH:'
